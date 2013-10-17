@@ -1,0 +1,45 @@
+.navbar-gpa{
+	background-color:#00A8FF;
+  border:0px;
+}
+.navbar-gpa .navbar-brand{
+	color:#FFFFFF;
+	font-size:24px;
+}
+.link{
+	margin-left: 100px;
+}
+.jleft{
+	float:left;
+	padding-right: 100px;
+}
+.jleft img{
+	width:150px;
+	height:150px;
+}
+.rleft{
+	float:left;
+}
+.container{
+	width:980px;
+}img{
+	margin-bottom: 20px;
+}
+.center {
+  display: block
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+.navbar-gpa .navbar-nav > .active > a, .navbar-gpa .navbar-nav > .active > a:hover {
+    background-color: #00517A;
+    color: #FFFFFF;
+}
+.bs-footer {
+    border-top: 1px solid #E5E5E5;
+    color: #777777;
+    margin-top: 100px;
+    padding-bottom: 30px;
+    padding-top: 40px;
+    text-align: center;
+}

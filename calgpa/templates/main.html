@@ -11,37 +11,53 @@
     </head>
     <body>
         <script type="text/javascript">
+        var paramaters = [
+            {whether_tongguo:1,tongguo:3.3,butongguo:0,zhong:2.0,liang:3.0,you:4.0,jige:2.0,bujige:0,fenshuduan:[[0,59,0],[60,69,2.0],[70,84,3.0],[85,100,4.0]],modal_name:"buaagpa",info_name:"info_buaa"},
+            {whether_tongguo:0,zhong:2.0,liang:3.0,you:4.0,jige:1.0,bujige:0,fenshuduan:[[0,59,0],[60,69,1.0],[70,79,2.0],[80,89,3.0],[90,100,4]],modal_name:"standgpa",info_name:"info_stand"},
+            {whether_tongguo:1,tongguo:4.0,butongguo:0,zhong:2.0,liang:3.0,you:4.0,jige:1.0,bujige:0,fenshuduan:[[0,59,0],[60,63,1.0],[64,67,1.5],[68,71,2.0],[72,74,2.3],[75,77,2.7],[78,81,3.0],[82,84,3.3],[85,89,3.7],[90,100,4]],modal_name:"beidagpa",info_name:"info_beida"},
+            {whether_tongguo:0,zhong:2.7,liang:3.7,you:4.3,jige:1.5,bujige:0,fenshuduan:[[0,59,0],[60,60,1.0],[61,63,1.3],[64,64,1.5],[65,67,1.7],[68,71,2.0],[72,74,2.3],[75,77,2.7],[78,81,3.0],[82,84,3.3],[85,89,3.7],[90,94,4.0],[95,100,4.3]],modal_name:"kedagpa",info_name:"info_keda"},
+            {whether_tongguo:0,zhong:3.0,liang:3.7,you:4.3,jige:2,bujige:0,fenshuduan:[[0,59,0],[60,61,1.0],[62,64,1.7],[65,66,2.0],[67,69,2.3],[70,74,2.7],[75,79,3.0],[80,84,3.3],[85,89,3.7],[90,94,4.0],[95,100,4.3]],modal_name:"jiaodagpa",info_name:"info_jiaoda"},
+            {whether_tongguo:0,zhong:3.0,liang:4,you:4,jige:2,bujige:0,fenshuduan:[[0,59,0],[60,69,2.0],[70,84,3.0],[85,100,4.0]],modal_name:"gaijin1gpa",info_name:"info_gaijin1"},
+            {whether_tongguo:0,zhong:3.0,liang:4,you:4,jige:2,bujige:0,fenshuduan:[[0,59,0],[60,74,2.0],[75,84,3.0],[85,100,4.0]],modal_name:"gaijin2gpa",info_name:"info_gaijin2"},
+        ];
         var xuefen = new Array();
         var jidian = new Array();
+        var all_xuefen = new Array();
+        var all_jidian = new Array();
         var jidian_2 = new Array();
         var count = 0;
+
+        function generate_info(){
+            for (var all_al in paramaters){
+                if (paramaters[all_al].whether_tongguo == 1){
+                    $("#" + paramaters[all_al].info_name).append("<li>" + "通过：" + paramaters[all_al].tongguo + "</li>");
+                    $("#" + paramaters[all_al].info_name).append("<li>" + "不通过：" + paramaters[all_al].butongguo + "</li>");
+                }
+                $("#" + paramaters[all_al].info_name).append("<li>" + "不及格：" + paramaters[all_al].bujige + "</li>");
+                $("#" + paramaters[all_al].info_name).append("<li>" + "及格：" + paramaters[all_al].jige + "</li>");
+                $("#" + paramaters[all_al].info_name).append("<li>" + "中等：" + paramaters[all_al].zhong + "</li>");
+                $("#" + paramaters[all_al].info_name).append("<li>" + "良好：" + paramaters[all_al].liang + "</li>");
+                $("#" + paramaters[all_al].info_name).append("<li>" + "优秀：" + paramaters[all_al].you + "</li>");
+                for (var all_part in paramaters[all_al].fenshuduan){
+                    $("#" + paramaters[all_al].info_name).append("<li>" + paramaters[all_al].fenshuduan[all_part][0] + "分~" + paramaters[all_al].fenshuduan[all_part][1] + "分：" + paramaters[all_al].fenshuduan[all_part][2] + "</li>");
+                }
+            }
+        };
+
         function calgpa(){
             jidian_2 = new Array();
             count = 0;
             cal_suanshupj();
             jidian_2 = new Array();
+            xuefen = new Array();
             count = 0;
             cal_jiaquanpj();
             xuefen = new Array();
             jidian_2 = new Array();
             count = 0;
             cal_jidianhe();
-            xuefen = new Array();
-            jidian = new Array();
-            count = 0;
-            calgpa_buaa();
-            xuefen = new Array();
-            jidian = new Array();
-            count = 0;
-            calgpa_stand();
-            xuefen = new Array();
-            jidian = new Array();
-            count = 0;
-            calgpa_beida();
-            xuefen = new Array();
-            jidian = new Array();
-            count = 0;
-            calgpa_keda();
+            cache_all();
+            calgpa_main();
             $('#alertModal').modal('show');
         }
         function confirmdeldata(){
@@ -62,13 +78,13 @@
                   $(this).children().last().children().prop("checked",true);
             }
             });
-             if (!$("#go_ahead_xx").text().indexOf("去死") != -1){
+             if (!$("#go_ahead_xx").text().replace(/(^\s*)|(\s*$)/g, "").indexOf("去死") != -1){
             $("#go_ahead_xx").removeClass("btn-warning");
             $("#go_ahead_xx").addClass("btn-danger");
             $("#go_ahead_xx").text("去死吧！选修　(＃｀д´)ﾉ ");
             $("table > tbody").children().each(function(){
                 if (!$(this).children().last().children().is(':checked')){
-                    if ($(this).children().first().next().text().indexOf("选修") != -1) {
+                    if ($(this).children().first().next().text().replace(/(^\s*)|(\s*$)/g, "").indexOf("选修") != -1) {
                         $(this).children().last().children().prop("checked",true);
                 }
             }
@@ -76,13 +92,13 @@
             }
         }
         function change_xx(){
-            if ($("#go_ahead_xx").text().indexOf("去死") != -1){
+            if ($("#go_ahead_xx").text().replace(/(^\s*)|(\s*$)/g, "").indexOf("去死") != -1){
             $("#go_ahead_xx").removeClass("btn-danger");
             $("#go_ahead_xx").addClass("btn-warning");
             $("#go_ahead_xx").text("快回来！选修　(≧σ≦)");
             $("table > tbody").children().each(function(){
                 if ($(this).children().last().children().is(':checked')){
-                    if ($(this).children().first().next().text().indexOf("选修") != -1) {
+                    if ($(this).children().first().next().text().replace(/(^\s*)|(\s*$)/g, "").indexOf("选修") != -1) {
                         $(this).children().last().children().removeProp("checked");
                 }
             }
@@ -93,7 +109,7 @@
             $("#go_ahead_xx").text("去死吧！选修　(＃｀д´)ﾉ ");
             $("table > tbody").children().each(function(){
                 if (!$(this).children().last().children().is(':checked')){
-                    if ($(this).children().first().next().text().indexOf("选修") != -1) {
+                    if ($(this).children().first().next().text().replace(/(^\s*)|(\s*$)/g, "").indexOf("选修") != -1) {
                         $(this).children().last().children().prop("checked",true);
                 }
             }
@@ -104,49 +120,47 @@
             var chengji = new Array();
              $("table > tbody").children().each(function(){
                     if ($(this).children().last().children().is(':checked')){
-                    temp = $(this).children().first().next().next().next().text();
+                        if (isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))) {
+                            var bukaoxuefen = 0;
+                            var targetcourse = $(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "");
+                            $("table > tbody").children().each(function(){
+                                if ($(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "") == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))){
+                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, ""));
+                                }
+                            })
+                            xuefen[count] = bukaoxuefen;
+                            }
+                        else{
+                    xuefen[count] = parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, ""));}
+                    temp = $(this).children().first().next().next().next().text().replace(/(^\s*)|(\s*$)/g, "");
                     switch(temp){
                         case '通过':
                             chengji[count] = 70;
-                            jidian_2[count] = 1.0;
                             break;
                         case '不通过':
                             chengji[count] = 50;
-                            jidian_2[count] = 0;
                             break;
                         case '不及格':
                             chengji[count] = 50;
-                            jidian_2[count] = 0;
                             break;
+                        case '中':
                         case '中等':
                             chengji[count] = 70;
-                            jidian_2[count] = 1.1;
                             break;
+                        case '良':
                         case '良好':
                             chengji[count] = 80;
-                            jidian_2[count] = 1.3;
                             break;
+                        case '优':
                         case '优秀':
                             chengji[count] = 90;
-                            jidian_2[count] = 1.5;
                             break;
                         case '及格':
                             chengji[count] = 60;
-                            jidian_2[count] = 1.0;
                             break;
                         default:
                             temp = parseFloat(temp);
                             chengji[count] = temp;
-                            if (temp<60)
-                                jidian_2[count] = 0;
-                            else if (temp >= 60 && temp<70)
-                                jidian_2[count] = 1.0;
-                            else if (temp >= 70 && temp<80)
-                                jidian_2[count] = 1.1;
-                            else if (temp >= 80 && temp<90)
-                                jidian_2[count] = 1.3
-                            else
-                                jidian_2[count] = 1.5;
                     }
                     count += 1;
                 }
@@ -154,8 +168,8 @@
             fenzi = 0.0;
             fenmu = 0.0;
             for (i=0;i<count;i++){
-                fenzi += chengji[i]*jidian_2[i];
-                fenmu += jidian_2[i];
+                fenzi += chengji[i]*xuefen[i];
+                fenmu += xuefen[i];
             }
             $("#jiaquanpj").text((fenzi/fenmu).toFixed(2));
         }
@@ -163,49 +177,35 @@
             var chengji = new Array();
              $("table > tbody").children().each(function(){
                     if ($(this).children().last().children().is(':checked')){
-                    temp = $(this).children().first().next().next().next().text();
+                    temp = $(this).children().first().next().next().next().text().replace(/(^\s*)|(\s*$)/g, "").replace(/(^\s*)|(\s*$)/g, "");
                     switch(temp){
                         case '通过':
                             chengji[count] = 70;
-                            jidian_2[count] = 1.0;
                             break;
                         case '不通过':
                             chengji[count] = 50;
-                            jidian_2[count] = 0;
                             break;
                         case '不及格':
                             chengji[count] = 50;
-                            jidian_2[count] = 0;
                             break;
+                        case '中':
                         case '中等':
                             chengji[count] = 70;
-                            jidian_2[count] = 1.1;
                             break;
+                        case '良':
                         case '良好':
                             chengji[count] = 80;
-                            jidian_2[count] = 1.3;
                             break;
+                        case '优':
                         case '优秀':
                             chengji[count] = 90;
-                            jidian_2[count] = 1.5;
                             break;
                         case '及格':
                             chengji[count] = 60;
-                            jidian_2[count] = 1.0;
                             break;
                         default:
                             temp = parseFloat(temp);
                             chengji[count] = temp;
-                            if (temp<60)
-                                jidian_2[count] = 0;
-                            else if (temp >= 60 && temp<70)
-                                jidian_2[count] = 1.0;
-                            else if (temp >= 70 && temp<80)
-                                jidian_2[count] = 1.1;
-                            else if (temp >= 80 && temp<90)
-                                jidian_2[count] = 1.3
-                            else
-                                jidian_2[count] = 1.5;
                     }
                     count += 1;
                 }
@@ -219,19 +219,19 @@
         function cal_jidianhe(){
             $("table > tbody").children().each(function(){
                     if ($(this).children().last().children().is(':checked')){
-                        if (isNaN(parseFloat($(this).children().first().next().next().text()))) {
+                        if (isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))) {
                             var bukaoxuefen = 0;
-                            var targetcourse = $(this).children().first().text();
+                            var targetcourse = $(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "");
                             $("table > tbody").children().each(function(){
-                                if ($(this).children().first().text() == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text()))){
-                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text());
+                                if ($(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "") == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))){
+                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, ""));
                                 }
                             })
                             xuefen[count] = bukaoxuefen;
                             }
                         else{
-                    xuefen[count] = parseFloat($(this).children().first().next().next().text());}
-                    temp = $(this).children().first().next().next().next().text();
+                    xuefen[count] = parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, ""));}
+                    temp = $(this).children().first().next().next().next().text().replace(/(^\s*)|(\s*$)/g, "");
                     switch(temp){
                         case '通过':
                             jidian_2[count] = 1.0;
@@ -242,12 +242,15 @@
                         case '不及格':
                             jidian_2[count] = 0;
                             break;
+                        case '中':
                         case '中等':
                             jidian_2[count] = 1.1;
                             break;
+                        case '良':
                         case '良好':
                             jidian_2[count] = 1.3;
                             break;
+                        case '优':
                         case '优秀':
                             jidian_2[count] = 1.5;
                             break;
@@ -276,295 +279,98 @@
             }
             $("#jidianhe").text(fenzi.toFixed(2));
         }
-        function calgpa_buaa(){
-            $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
-                        if (isNaN(parseFloat($(this).children().first().next().next().text()))) {
-                            var bukaoxuefen = 0;
-                            var targetcourse = $(this).children().first().text();
-                            $("table > tbody").children().each(function(){
-                                if ($(this).children().first().text() == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text()))){
-                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text());
-                                }
-                            })
-                            xuefen[count] = bukaoxuefen;
-                            }
-                        else{
-                    xuefen[count] = parseFloat($(this).children().first().next().next().text());}
-                    temp = $(this).children().first().next().next().next().text();
-                    switch(temp){
-                        case '通过':
-                            jidian[count] = 3.3;
-                            jidian_2[count] = 1.0;
-                            break;
-                        case '不通过':
-                            jidian[count] = 0;
-                            jidian_2[count] = 0;
-                            break;
-                        case '不及格':
-                            jidian[count] = 0;
-                            jidian_2[count] = 0;
-                            break;
-                        case '中等':
-                            jidian[count] = 2.0;
-                            jidian_2[count] = 1.1;
-                            break;
-                        case '良好':
-                            jidian[count] = 3.0;
-                            jidian_2[count] = 1.3;
-                            break;
-                        case '优秀':
-                            jidian[count] = 4.0;
-                            jidian_2[count] = 1.5;
-                            break;
-                        case '及格':
-                            jidian[count] = 2.0;
-                            jidian_2[count] = 1.0;
-                            break;
-                        default:
-                            temp = parseFloat(temp);
-                            if (temp<60)
-                                jidian[count] = 0;
-                            else if (temp >= 60 && temp<70)
-                                jidian[count] = 2.0;
-                            else if (temp >= 70 && temp<85)
-                                jidian[count] = 3.0;
-                            else
-                                jidian[count] = 4.0;
 
-                            if (temp<60)
-                                jidian_2[count] = 0;
-                            else if (temp >= 60 && temp<70)
-                                jidian_2[count] = 1.0;
-                            else if (temp >= 70 && temp<80)
-                                jidian_2[count] = 1.1;
-                            else if (temp >= 80 && temp<90)
-                                jidian_2[count] = 1.3
-                            else
-                                jidian_2[count] = 1.5;
-                    }
-                    count += 1;
-                }
-                });
-        fenzi = 0.0;
-            fenmu = 0.0;
-            for (i=0;i<count;i++){
-                fenzi += xuefen[i]*jidian[i];
-                fenmu += xuefen[i]; 
-            }
-            $("#buaagpa").text((fenzi/fenmu).toFixed(2));
-            fenzi = 0.0;
-            for (i=0;i<count;i++){
-                fenzi += xuefen[i]*jidian_2[i];
-            }
-            $("#buaagpa").parent().next().children().text(fenzi.toFixed(2));
-        }
-        function calgpa_stand(){
+        function cache_all(){
+            count = 0;
             $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
-                    temp = $(this).children().first().next().next().next().text();
-                    if (temp != '通过' && temp != '不通过'){
-                        if (isNaN(parseFloat($(this).children().first().next().next().text()))) {
+                        if (isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))) {
                             var bukaoxuefen = 0;
-                            var targetcourse = $(this).children().first().text();
+                            var targetcourse = $(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "");
                             $("table > tbody").children().each(function(){
-                                if ($(this).children().first().text() == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text()))){
-                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text());
+                                if ($(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "") == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))){
+                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, ""));
                                 }
                             })
-                            xuefen[count] = bukaoxuefen;
+                            all_xuefen[count] = bukaoxuefen;
                             }
                         else{
-                    xuefen[count] = parseFloat($(this).children().first().next().next().text());}
-                    switch(temp){
-                        case '不及格':
-                            jidian[count] = 0;
-                            break;
-                        case '中等':
-                            jidian[count] = 2.0;
-                            break;
-                        case '良好':
-                            jidian[count] = 3.0;
-                            break;
-                        case '优秀':
-                            jidian[count] = 4.0;
-                            break;
-                        case '及格':
-                            jidian[count] = 1.0;
-                            break;
-                        default:
-                            temp = parseFloat(temp);
-                            if (temp<60)
-                                jidian[count] = 0;
-                            else if (temp >= 60 && temp<70)
-                                jidian[count] = 1.0;
-                            else if (temp >= 70 && temp<80)
-                                jidian[count] = 2.0;
-                            else if (temp >= 80 && temp<90)
-                                jidian[count] = 3.0;
-                            else 
-                                jidian[count] = 4.0;
-                    }
+                    all_xuefen[count] = parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, ""));}
+                    temp = $(this).children().first().next().next().next().text().replace(/(^\s*)|(\s*$)/g, "");
+                    all_jidian[count] = temp;
                     count += 1;
-                }
-                }
                 });
-        fenzi = 0.0;
-            fenmu = 0.0;
-            for (i=0;i<count;i++){
-                fenzi += xuefen[i]*jidian[i];
-                fenmu += xuefen[i]; 
-            }
-            $("#standgpa").text((fenzi/fenmu).toFixed(2));
         }
-        function calgpa_beida(){
-            $("table > tbody").children().each(function(){
+
+        function calgpa_main(){
+            for (var all_al in paramaters){
+                xuefen = new Array();
+                jidian = new Array();
+                count = 0;
+                count_all = 0;
+                $("table > tbody").children().each(function(){
                     if ($(this).children().last().children().is(':checked')){
-                        if (isNaN(parseFloat($(this).children().first().next().next().text()))) {
-                            var bukaoxuefen = 0;
-                            var targetcourse = $(this).children().first().text();
-                            $("table > tbody").children().each(function(){
-                                if ($(this).children().first().text() == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text()))){
-                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text());
-                                }
-                            })
-                            xuefen[count] = bukaoxuefen;
-                            }
-                        else{
-                    xuefen[count] = parseFloat($(this).children().first().next().next().text());}
-                    temp = $(this).children().first().next().next().next().text();
+                        xuefen[count] = all_xuefen[count_all];
+                        
+                    temp = all_jidian[count_all];
                     switch(temp){
                         case '通过':
-                            jidian[count] = 4.0;
+                            if (paramaters[all_al].whether_tongguo == 1){
+                            jidian[count] = paramaters[all_al].tongguo;
+                            }
+                            else{
+                                count -= 1;
+                            }
                             break;
                         case '不通过':
-                            jidian[count] = 0;
+                            if (paramaters[all_al].whether_tongguo == 1){
+                            jidian[count] = paramaters[all_al].butongguo;
+                            }
+                            else{
+                                count -= 1;
+                            }
                             break;
                         case '不及格':
-                            jidian[count] = 0;
+                            jidian[count] = paramaters[all_al].bujige;
                             break;
+                        case '中':
                         case '中等':
-                            jidian[count] = 2.0;
+                            jidian[count] = paramaters[all_al].zhong;
                             break;
+                        case '良':
                         case '良好':
-                            jidian[count] = 3.0;
+                            jidian[count] = paramaters[all_al].liang;
                             break;
+                        case '优':
                         case '优秀':
-                            jidian[count] = 4.0;
+                            jidian[count] = paramaters[all_al].you;
                             break;
                         case '及格':
-                            jidian[count] = 1.0;
+                            jidian[count] = paramaters[all_al].jige;
                             break;
                         default:
                             temp = parseFloat(temp);
-                            if (temp<60)
-                                jidian[count] = 0;
-                            else if (temp >= 60 && temp<64)
-                                jidian[count] = 1.0;
-                            else if (temp >= 64 && temp<68)
-                                jidian[count] = 1.5;
-                            else if (temp >= 68 && temp<72)
-                                jidian[count] = 2.0;
-                            else if (temp >= 72 && temp<75)
-                                jidian[count] = 2.3;
-                            else if (temp >= 75 && temp<78)
-                                jidian[count] = 2.7;
-                            else if (temp >= 78 && temp<82)
-                                jidian[count] = 3.0;
-                            else if (temp >= 82 && temp<85)
-                                jidian[count] = 3.3;
-                            else if (temp >= 85 && temp<90)
-                                jidian[count] = 3.7;
-                            else
-                                jidian[count] = 4.0;
+                            for (var all_part in paramaters[all_al].fenshuduan){
+                            if (temp >= paramaters[all_al].fenshuduan[all_part][0] && temp <= paramaters[all_al].fenshuduan[all_part][1])
+                                jidian[count] = paramaters[all_al].fenshuduan[all_part][2];
+                        }
                     }
                     count += 1;
                 }
+                count_all += 1;
                 });
-        fenzi = 0.0;
+            fenzi = 0.0;
             fenmu = 0.0;
             for (i=0;i<count;i++){
                 fenzi += xuefen[i]*jidian[i];
                 fenmu += xuefen[i]; 
             }
-            $("#beidagpa").text((fenzi/fenmu).toFixed(2));
-        }
-        function calgpa_keda(){
-            $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
-                        temp = $(this).children().first().next().next().next().text();
-                    if (temp != '通过' && temp != '不通过'){
-                        if (isNaN(parseFloat($(this).children().first().next().next().text()))) {
-                            var bukaoxuefen = 0;
-                            var targetcourse = $(this).children().first().text();
-                            $("table > tbody").children().each(function(){
-                                if ($(this).children().first().text() == targetcourse && !isNaN(parseFloat($(this).children().first().next().next().text()))){
-                                    bukaoxuefen = parseFloat($(this).children().first().next().next().text());
-                                }
-                            })
-                            xuefen[count] = bukaoxuefen;
-                            }
-                        else{
-                    xuefen[count] = parseFloat($(this).children().first().next().next().text());}
-                    temp = $(this).children().first().next().next().next().text();
-                    switch(temp){
-                        case '不及格':
-                            jidian[count] = 0;
-                            break;
-                        case '中等':
-                            jidian[count] = 2.0;
-                            break;
-                        case '良好':
-                            jidian[count] = 3.0;
-                            break;
-                        case '优秀':
-                            jidian[count] = 3.0;
-                            break;
-                        case '及格':
-                            jidian[count] = 4.0;
-                            break;
-                        default:
-                            temp = parseFloat(temp);
-                            if (temp<60)
-                                jidian[count] = 0;
-                            else if (temp >= 61 && temp<=63)
-                                jidian[count] = 1.3;
-                            else if (temp == 60)
-                                jidian[count] = 1.0;
-                            else if (temp == 64)
-                                jidian[count] = 1.5;
-                            else if (temp >= 65 && temp<=67)
-                                jidian[count] = 1.7;
-                            else if (temp >= 68 && temp<=71)
-                                jidian[count] = 2.0;
-                            else if (temp >= 72 && temp<75)
-                                jidian[count] = 2.3;
-                            else if (temp >= 75 && temp<78)
-                                jidian[count] = 2.7;
-                            else if (temp >= 78 && temp<82)
-                                jidian[count] = 3.0;
-                            else if (temp >= 82 && temp<85)
-                                jidian[count] = 3.3;
-                            else if (temp >= 85 && temp<90)
-                                jidian[count] = 3.7;
-                            else if (temp >= 90 && temp<95)
-                                jidian[count] = 4.0;
-                            else
-                                jidian[count] = 4.3;
-                    }
-                    count += 1;
-                }}
-                });
-        fenzi = 0.0;
-            fenmu = 0.0;
-            for (i=0;i<count;i++){
-                fenzi += xuefen[i]*jidian[i];
-                fenmu += xuefen[i]; 
+            $("#" + paramaters[all_al].modal_name).text((fenzi/fenmu).toFixed(2));
             }
-            $("#kedagpa").text((fenzi/fenmu).toFixed(2));
         }
+        
             $(document).ready(function(){
                 window.csrftoken = getCookie('csrftoken');
+                generate_info()
                 $("#al-info").on('click',function(){
                     $("#alertModal").modal("hide");
                     setTimeout("$('#al-info-modal').modal('show');", 500);
@@ -639,6 +445,9 @@
     <tr><td>标准算法</td><td><span id="standgpa"></span></td></tr>
     <tr><td>北大算法</td><td><span id="beidagpa"></span></td></tr>
     <tr><td>科大算法</td><td><span id="kedagpa"></span></td></tr>
+    <tr><td>上海交大算法</td><td><span id="jiaodagpa"></span></td></tr>
+    <tr><td>改进4.0算法(1)</td><td><span id="gaijin1gpa"></span></td></tr>
+    <tr><td>改进4.0算法(2)</td><td><span id="gaijin2gpa"></span></td></tr>
 </tbody>
 
 </table>
@@ -681,80 +490,25 @@
       </div>
       <div class="modal-body">
         北航算法：
-            <ul>
-                <li>通过：3.3</li>
-                <li>不通过：0</li>
-                <li>不及格：0</li>
-                <li>及格：2</li>
-                <li>中等：2</li>
-                <li>良好：3</li>
-                <li>优秀：4</li>
-                <li>&lt;60分：0</li>
-                <li>60(含)分~70分：2</li>
-                <li>70(含)分~85分：3</li>
-                <li>&gt;=85分：4</li>
+            <ul id="info_buaa">
             </ul>
         <br>
         标准算法：
-            <ul>
-                <li>不及格：0</li>
-                <li>及格：1</li>
-                <li>中等：2</li>
-                <li>良好：3</li>
-                <li>优秀：4</li>
-                <li>&lt;60分：0</li>
-                <li>60(含)分~70分：1</li>
-                <li>70(含)分~80分：2</li>
-                <li>80(含)分~90分：3</li>
-                <li>&gt;=90分：4</li>
+            <ul id="info_stand">
             </ul>
         <p class="text-warning">注意：因为标准算法没有明确说明“通过”以及“不通过”对应的学分，所以这里直接忽略了这两种情况。</p>
         <br>
         北大算法：
-            <ul>
-                <li>通过：4</li>
-                <li>不通过：0</li>
-                <li>不及格：0</li>
-                <li>及格：1</li>
-                <li>中等：2</li>
-                <li>良好：3</li>
-                <li>优秀：4</li>
-                <li>&lt;60分：0</li>
-                <li>60(含)分~64分：1</li>
-                <li>64(含)分~68分：1.5</li>
-                <li>68(含)分~72分：2</li>
-                <li>72(含)分~75分：2.3</li>
-                <li>75(含)分~78分：2.7</li>
-                <li>78(含)分~82分：3</li>
-                <li>82(含)分~85分：3.3</li>
-                <li>85(含)分~90分：3.7</li>
-                <li>&gt;=90分：4</li>
+            <ul id="info_beida">
             </ul>
         <p class="text-warning">注意：北大算法没有明确说明“通过”以及“不通过”对应的学分，不过据我查到的信息，“通过”是可以自己决定的，所以这里按照4来算。</p>
         <br>
         科大算法：
-            <ul>
-                <li>不及格：0</li>
-                <li>及格：1</li>
-                <li>中等：2</li>
-                <li>良好：3</li>
-                <li>优秀：4</li>
-                <li>&lt;60分：0</li>
-                <li>60分：1</li>
-                <li>61(含)分~64分：1.3</li>
-                <li>64(含)分~68分：1.5</li>
-                <li>68(含)分~72分：2</li>
-                <li>72(含)分~75分：2.3</li>
-                <li>75(含)分~78分：2.7</li>
-                <li>78(含)分~82分：3</li>
-                <li>82(含)分~85分：3.3</li>
-                <li>85(含)分~90分：3.7</li>
-                <li>90(含)分~95分：4</li>
-                <li>&gt;=95分：4.3</li>
+            <ul id="info_keda">
             </ul>    
         <p class="text-warning">注意：科大算法没有明确说明“通过”以及“不通过”对应的学分，所以这里直接忽略了这两种情况。</p>
         <br>
-        平均分相关绩点：
+        绩点学分和：
             <ul>
                 <li>通过：1</li>
                 <li>不通过：0</li>
@@ -769,6 +523,21 @@
                 <li>81(含)分~90分：1.3</li>
                 <li>&gt;=90：1.5</li>
             </ul>
+        <br>
+        上海交大算法
+            <ul id="info_jiaoda">
+            </ul>
+        <p class="text-warning">注意：上海交大算法忽略“通过”及“不通过”科目。</p>
+        <br>
+        改进4.0算法(1)
+            <ul id="info_gaijin1">
+            </ul>
+        <p class="text-warning">注意：改进4.0算法(1)忽略“通过”及“不通过”科目。</p>
+        <br>
+        改进4.0算法(2)
+            <ul id="info_gaijin2">
+            </ul>
+        <p class="text-warning">注意：改进4.0算法(2)忽略“通过”及“不通过”科目。</p>
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">知道了</button>

@@ -118,7 +118,7 @@ function main_func(){
     count = 0
     thelength = $(window.frames[0].frames[1].document).find("tr.tablefont2").length;
     $(window.frames[0].frames[1].document).find("tr.tablefont2").each(function(){
-      if (count != 0 && count != thelength - 1 && count != thelength - 2){
+      if (count != thelength - 1 && count != thelength - 2){
         count1 = 0;
       $(this).find("td").each(function (){
         if (count1 == 2 || count1 == 1){   

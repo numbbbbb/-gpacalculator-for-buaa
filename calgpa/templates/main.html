@@ -74,7 +74,7 @@
         }
         function select_all(){
              $("table > tbody").children().each(function(){
-                if (!$(this).children().last().children().is(':checked')){
+                if (!$(this).children().last().children().prop("checked")){
                   $(this).children().last().children().prop("checked",true);
             }
             });
@@ -83,7 +83,7 @@
             $("#go_ahead_xx").addClass("btn-danger");
             $("#go_ahead_xx").text("去死吧！选修　(＃｀д´)ﾉ ");
             $("table > tbody").children().each(function(){
-                if (!$(this).children().last().children().is(':checked')){
+                if (!$(this).children().last().children().prop("checked")){
                     if ($(this).children().first().next().text().replace(/(^\s*)|(\s*$)/g, "").indexOf("选修") != -1) {
                         $(this).children().last().children().prop("checked",true);
                 }
@@ -97,9 +97,9 @@
             $("#go_ahead_xx").addClass("btn-warning");
             $("#go_ahead_xx").text("快回来！选修　(≧σ≦)");
             $("table > tbody").children().each(function(){
-                if ($(this).children().last().children().is(':checked')){
+                if ($(this).children().last().children().prop("checked")){
                     if ($(this).children().first().next().text().replace(/(^\s*)|(\s*$)/g, "").indexOf("选修") != -1) {
-                        $(this).children().last().children().removeProp("checked");
+                        $(this).children().last().children().prop("checked", false);
                 }
             }
             });}
@@ -108,9 +108,9 @@
             $("#go_ahead_xx").addClass("btn-danger");
             $("#go_ahead_xx").text("去死吧！选修　(＃｀д´)ﾉ ");
             $("table > tbody").children().each(function(){
-                if (!$(this).children().last().children().is(':checked')){
+                if (!$(this).children().last().children().prop("checked")){
                     if ($(this).children().first().next().text().replace(/(^\s*)|(\s*$)/g, "").indexOf("选修") != -1) {
-                        $(this).children().last().children().prop("checked",true);
+                        $(this).children().last().children().prop("checked", true);
                 }
             }
             })
@@ -119,7 +119,7 @@
         function cal_jiaquanpj(){
             var chengji = new Array();
              $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
+                    if ($(this).children().last().children().prop("checked")){
                         if (isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))) {
                             var bukaoxuefen = 0;
                             var targetcourse = $(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "");
@@ -176,7 +176,7 @@
         function cal_suanshupj(){
             var chengji = new Array();
              $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
+                    if ($(this).children().last().children().prop("checked")){
                     temp = $(this).children().first().next().next().next().text().replace(/(^\s*)|(\s*$)/g, "").replace(/(^\s*)|(\s*$)/g, "");
                     switch(temp){
                         case '通过':
@@ -218,7 +218,7 @@
         }
         function cal_jidianhe(){
             $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
+                    if ($(this).children().last().children().prop("checked")){
                         if (isNaN(parseFloat($(this).children().first().next().next().text().replace(/(^\s*)|(\s*$)/g, "")))) {
                             var bukaoxuefen = 0;
                             var targetcourse = $(this).children().first().text().replace(/(^\s*)|(\s*$)/g, "");
@@ -258,7 +258,7 @@
                             jidian_2[count] = 1.0;
                             break;
                         default:
-                            temp = parseFloat(temp);
+                            temp = parseInt(temp);
                             if (temp<60)
                                 jidian_2[count] = 0;
                             else if (temp >= 60 && temp<70)
@@ -308,7 +308,7 @@
                 count = 0;
                 count_all = 0;
                 $("table > tbody").children().each(function(){
-                    if ($(this).children().last().children().is(':checked')){
+                    if ($(this).children().last().children().prop("checked")){
                         xuefen[count] = all_xuefen[count_all];
                         
                     temp = all_jidian[count_all];
@@ -348,7 +348,7 @@
                             jidian[count] = paramaters[all_al].jige;
                             break;
                         default:
-                            temp = parseFloat(temp);
+                            temp = parseInt(temp);
                             for (var all_part in paramaters[all_al].fenshuduan){
                             if (temp >= paramaters[all_al].fenshuduan[all_part][0] && temp <= paramaters[all_al].fenshuduan[all_part][1])
                                 jidian[count] = paramaters[all_al].fenshuduan[all_part][2];
@@ -545,7 +545,7 @@
     </div>
   </div>
 </div>
-
+{% include 'advices.html' %}
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
